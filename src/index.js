@@ -38,12 +38,13 @@ const createCell = (cell) => {
         rowIndex: cell.row,
         columnSpan: 1,
         rowSpan: 1,
+        legend: { visible: false },
     })
     // Add a random omni-directional series.
     const type = chooseRandom(['PointSeries', 'LineSeries'])
     // Setup data-generation for series.
     if (cell.row == cell.col) {
-        const series = chart['add' + type]()
+        const series = chart['add' + type]({})
         // Random trace
         createTraceGenerator()
             .setNumberOfPoints(100000)
@@ -52,7 +53,7 @@ const createCell = (cell) => {
             .setStreamBatchSize(10)
             .setStreamRepeat(true)
             .toStream()
-            .forEach((point) => series.add(point))
+            .forEach((point) => series.appendSample(point))
     } else {
         // Random progressive trace with mapped direction.
         const flipPlane = cell.col == 1
@@ -75,7 +76,7 @@ const createCell = (cell) => {
         } else
             axisX
                 .setInterval({ start: 0, end: 100, stopAxisAfter: false })
-                .setScrollStrategy(flipPlane ? AxisScrollStrategies.fitting : AxisScrollStrategies.progressive)
+                .setScrollStrategy(flipPlane ? AxisScrollStrategies.fitting : AxisScrollStrategies.scrolling)
 
         if (mul.y < 0) {
             axisY
@@ -84,7 +85,7 @@ const createCell = (cell) => {
         } else
             axisY
                 .setInterval({ start: 0, end: 100, stopAxisAfter: false })
-                .setScrollStrategy(flipPlane ? AxisScrollStrategies.progressive : AxisScrollStrategies.fitting)
+                .setScrollStrategy(flipPlane ? AxisScrollStrategies.scrolling : AxisScrollStrategies.fitting)
 
         const series = chart['add' + type](axisX, axisY)
         createProgressiveTraceGenerator()
@@ -94,7 +95,9 @@ const createCell = (cell) => {
             .setStreamBatchSize(2)
             .setStreamRepeat(true)
             .toStream()
-            .forEach((point) => series.add({ x: (flipPlane ? point.y : point.x) * mul.x, y: (flipPlane ? point.x : point.y) * mul.y }))
+            .forEach((point) =>
+                series.appendSample({ x: (flipPlane ? point.y : point.x) * mul.x, y: (flipPlane ? point.x : point.y) * mul.y }),
+            )
     }
     return chart.setTitle(type)
 }
