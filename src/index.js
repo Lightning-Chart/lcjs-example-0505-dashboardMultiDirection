@@ -14,7 +14,7 @@ const { lightningChart, AxisScrollStrategies, Themes } = lcjs
 const { createProgressiveTraceGenerator, createTraceGenerator } = xydata
 
 // Create a 3x3 dashboard.
-// NOTE: Using `Dashboard` is no longer recommended for new applications. Find latest recommendations here: https://lightningchart.com/js-charts/docs/basic-topics/grouping-charts/
+// NOTE: Using `Dashboard` is no longer recommended for new applications. Find latest recommendations here: https://lightningchart.com/js-charts/docs/more-guides/grouping-charts/
 const grid = lightningChart({
             resourcesBaseUrl: new URL(document.head.baseURI).origin + new URL(document.head.baseURI).pathname + 'resources/',
         }).Dashboard({
